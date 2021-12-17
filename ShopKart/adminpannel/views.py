@@ -19,6 +19,8 @@ from .forms import LoginForm
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 
+#............Admin-login code...............
+
 def loginadmin(request):
     if request.user.is_authenticated:
         return HttpResponse('You Are already logged in')
@@ -64,3 +66,13 @@ def logoutadmin(request):
     #return HttpResponseRedirectBase(reverse('login')) 
     return HttpResponseRedirect(reverse('login') )    
      
+#...........................................  
+
+#..............Manage product...............  
+
+from .models import Products
+
+@user_passes_test(checksuperuser,login_url = reverse_lazy('login'))
+def manageproducts(request):
+    products = Products.objects.all()
+    return render(request,'adminpannel/manageproducts.html',{'products':products})

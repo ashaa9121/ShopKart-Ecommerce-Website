@@ -7,4 +7,5 @@ urlpatterns = [
     path('', RedirectView.as_view(url='login')),
     path('dashboard', views.admindashboard, name='admindashboard'),
     path('adminlogout', views.logoutadmin, name='adminlogout'),
+    path('manage-products', views.manageproducts, name='manageproducts'),
 ]
