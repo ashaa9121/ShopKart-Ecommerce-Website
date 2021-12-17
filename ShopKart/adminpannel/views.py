@@ -19,8 +19,7 @@ from .forms import LoginForm
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 
-#............Admin-login code...............
-
+#------------------------------Admin-login code-------------------------------
 def loginadmin(request):
     if request.user.is_authenticated:
         return HttpResponse('You Are already logged in')
@@ -66,9 +65,8 @@ def logoutadmin(request):
     #return HttpResponseRedirectBase(reverse('login')) 
     return HttpResponseRedirect(reverse('login') )    
      
-#...........................................  
 
-#..............Manage product...............  
+#----------------------Manage Products---------------------  
 
 from .models import Products
 
@@ -76,3 +74,33 @@ from .models import Products
 def manageproducts(request):
     products = Products.objects.all()
     return render(request,'adminpannel/manageproducts.html',{'products':products})
+
+
+#--------------------Add Product---------------------
+
+from .forms import ProductForm
+
+@user_passes_test(checksuperuser,login_url = reverse_lazy('login'))
+def addproduct(request):
+    if request.method == 'POST':
+        product_form = ProductForm(request.POST, request.FILES)
+        if product_form.is_valid():
+            product_name = product_form.cleaned_data['product_name']
+            product_description = product_form.cleaned_data['product_description']
+            price = product_form.cleaned_data['price']
+            product_image = request.FILES['product_image']
+
+            product_instance = Products(product_name = product_name, 
+                                        product_description = product_description,
+                                        price = price,
+                                        product_picture = product_image)
+            product_instance.save()
+            return HttpResponseRedirect(reverse('manageproducts'))
+        else:
+            product_form = ProductForm(request.POST, request.FILES)
+            return render(request,'adminpannel/addproduct.html',{'productform':product_form}) 
+    else:
+        product_form = ProductForm()
+        return render(request,'adminpannel/addproduct.html',{'productform':product_form})   
+
+#-----------------------------------------------------------         
