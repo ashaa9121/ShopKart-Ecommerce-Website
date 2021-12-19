@@ -9,4 +9,7 @@ urlpatterns = [
     path('adminlogout', views.logoutadmin, name='adminlogout'),
     path('manage-products', views.manageproducts, name='manageproducts'),
     path('add-product', views.addproduct, name='addproduct'),
+    path('change-product-status', views.changestatus, name='changestatus'),
+    path('edit-product/<int:product_id>', views.editproduct, name='editproduct'),
+    
 ]

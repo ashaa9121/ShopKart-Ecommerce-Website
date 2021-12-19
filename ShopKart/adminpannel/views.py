@@ -103,4 +103,66 @@ def addproduct(request):
         product_form = ProductForm()
         return render(request,'adminpannel/addproduct.html',{'productform':product_form})   
 
-#-----------------------------------------------------------         
+#-----------------------------------------------------------    
+
+
+#-------------------Enable/Disable product(Admin)--------------------
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+@user_passes_test(checksuperuser,login_url = reverse_lazy('login'))
+def changestatus(request):
+    if request.is_ajax():
+        product_id = int(request.POST['product'])
+        action = request.POST['action']
+        product_instance = Products.objects.get(id=product_id)
+        if action == "disable":
+            product_instance.is_active = 0
+        else:
+            product_instance.is_active = 1
+        product_instance.save()
+        return JsonResponse({'result':'success'})
+#-----------------------------------------------------------------
+
+#-------------Edit Product----------------------------------------
+
+from .forms import EditProductForm
+from .models import models
+
+@user_passes_test(checksuperuser,login_url = reverse_lazy('login'))
+def editproduct(request,product_id):
+    if request.method == 'POST':
+        product_form = EditProductForm(request.POST, request.FILES)
+        if product_form.is_valid():
+            product_name = product_form.cleaned_data['product_name']
+            product_description = product_form.cleaned_data['product_description']
+            price = product_form.cleaned_data['price']
+            product_instance = Products.objects.get(id=product_id)
+            product_instance.product_name = product_name
+            product_instance.product_description = product_description
+            product_instance.price = price
+            if request.FILES:
+                product_image = request.FILES['product_image']
+                product_instance.product_picture = product_image
+            product_instance.save()
+            return HttpResponseRedirect(reverse('manageproducts'))
+        else:
+            product_form = EditProductForm(request.POST, request.FILES)
+            return render(request,'adminpannel/editproduct.html',{'productform':product_form}) 
+    else:
+        product_instance = Products.objects.get(id=product_id)
+        product_form = EditProductForm(initial={'product_name': product_instance.product_name,
+                                            'product_description':product_instance.product_description,
+                                            'price':product_instance.price,
+                                            'product_image':product_instance.product_picture
+                                            })
+        return render(request,'adminpannel/editproduct.html',{'productform':product_form,'current_image':product_instance.product_picture})
+        
+#-------------------------------------------------------------
+
+#-----------------Delete Product------------------------------
+
+
+

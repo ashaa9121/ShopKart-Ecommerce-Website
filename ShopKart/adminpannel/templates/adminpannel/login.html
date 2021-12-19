@@ -2,10 +2,10 @@
 
 {%block nocontainer%}
 <section class="">
-
-    <div class="container">
   
-      <form class="login-form" action="{%url 'login' %}" method="POST">
+    <div class="container">
+      <h1 style= "text-align: center;">ShopKart</h1>
+      <form class="login-form" style="margin-top: 70px;"  action="{%url 'login' %}" method="POST">
           {%csrf_token%}
         <div class="login-wrap">
           <p class="login-img"><i class="bi bi-lock"></i></p>
