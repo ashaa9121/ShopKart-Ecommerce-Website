@@ -164,5 +164,9 @@ def editproduct(request,product_id):
 
 #-----------------Delete Product------------------------------
 
-
+@user_passes_test(checksuperuser,login_url = reverse_lazy('login'))
+def deleteproduct(request,product_id):
+    product_instance = Products.objects.get(id=product_id)
+    product_instance.delete()
+    return HttpResponseRedirect(reverse('manageproducts'))
 

@@ -52,7 +52,7 @@
                     </td>
                     <td><a href="{% url 'editproduct' product_id=product.id%}" class="edit btn btn-sm btn-warning">Edit</a></td>
                     <td><a target="_blank" href="" class="view btn btn-sm btn-primary">View</a></td>
-                    <td><a data-toggle="modal" id="myModal" data-target="#myModal3" prod_id ="{{product.id}}" href="" class="deleteproduct btn btn-sm btn-danger">Delete</a></td>
+                    <td><a onclick="return confirm('Are you sure you want to delete this?')" href="{% url 'deleteproduct' product_id=product.id%}" class="deleteproduct btn btn-sm btn-danger">Delete</a></td>
                 </tr>
                 {%endfor%}
               </tbody>
@@ -61,59 +61,15 @@
             <div class="alert alert-block alert-danger fade in">
                 <h4>There are no products to show.</h4>
               </div>
-            {%endif%}
-            
+            {%endif%}  
           </section>
         </div>
     </div>
 </section>
+
 {%endblock%}
 
 {%block scripts%}
-&lt;script type="text/javascript"&gt;
-  $(document).on('click','.disablebtn',function(e){
-    e.preventDefault();
-    var prod_id = $(this).attr('prod_id');
-    $.ajax(
-      {
-          type: "POST",
-          url: "{%url 'changestatus'%}",
-          dataType: 'json',
-          data: {action:'disable',product:prod_id},
-          success: function(data) {
-            $('#statustext'+prod_id).text('Inactive');
-            $('#statustext'+prod_id).toggleClass('text-success text-danger');
-            $('#statusbtn'+prod_id).toggleClass('disablebtn enablebtn');
-            $('#statusbtn'+prod_id).toggleClass('btn-danger btn-success');
-            $('#statusbtn'+prod_id).text('Enable');
-          },
-          error: function() { 
-            alert("server error");
-          }
-      });
-  });
 
-  $(document).on('click','.enablebtn',function(e){
-    e.preventDefault();
-    var prod_id = $(this).attr('prod_id');
-    $.ajax(
-      {
-          type: "POST",
-          url: "{%url 'changestatus'%}",
-          dataType: 'json',
-          data: {action:'enable',product:prod_id},
-          success: function(data) {
-            $('#statustext'+prod_id).text('Active');
-            $('#statustext'+prod_id).toggleClass('text-danger text-success');
-            $('#statusbtn'+prod_id).toggleClass('enablebtn disablebtn');
-            $('#statusbtn'+prod_id).toggleClass('btn-success btn-danger');
-            $('#statusbtn'+prod_id).text('Disable');
-          },
-          error: function() { 
-            alert("server error");
-          }
-      });
-  });
-&lt;/script&gt;
 {%endblock%}
 
