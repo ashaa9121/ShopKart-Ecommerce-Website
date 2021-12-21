@@ -122,8 +122,8 @@ def changestatus(request):
             product_instance.is_active = 0
         else:
             product_instance.is_active = 1
-        product_instance.save()
-        return JsonResponse({'result':'success'})
+            product_instance.save()
+    return JsonResponse({'result':'success'})
 #-----------------------------------------------------------------
 
 #-------------Edit Product----------------------------------------

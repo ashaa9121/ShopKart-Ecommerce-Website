@@ -69,7 +69,52 @@
 
 {%endblock%}
 
-{%block scripts%}
+{% block script %}
 
-{%endblock%}
+<script type="text/javascript">
+  $(document).on('click','.disablebtn',function(e){
+    e.preventDefault();
+    var prod_id = $(this).attr('prod_id');
+    $.ajax(
+      {
+          type: "POST",
+          url: "{%url 'changestatus'%}",
+          dataType: 'json',
+          data: {action:'disable',product:prod_id},
+          success: function(data) {
+            $('#statustext'+prod_id).text('Inactive');
+            $('#statustext'+prod_id).toggleClass('text-success text-danger');
+            $('#statusbtn'+prod_id).toggleClass('disablebtn enablebtn');
+            $('#statusbtn'+prod_id).toggleClass('btn-danger btn-success');
+            $('#statusbtn'+prod_id).text('Enable');
+          },
+          error: function() { 
+            alert("server error");
+          }
+      });
+  });
+
+  $(document).on('click','.enablebtn',function(e){
+    e.preventDefault();
+    var prod_id = $(this).attr('prod_id');
+    $.ajax(
+      {
+          type: "POST",
+          url: "{%url 'changestatus'%}",
+          dataType: 'json',
+          data: {action:'enable',product:prod_id},
+          success: function(data) {
+            $('#statustext'+prod_id).text('Active');
+            $('#statustext'+prod_id).toggleClass('text-danger text-success');
+            $('#statusbtn'+prod_id).toggleClass('enablebtn disablebtn');
+            $('#statusbtn'+prod_id).toggleClass('btn-success btn-danger');
+            $('#statusbtn'+prod_id).text('Disable');
+          },
+          error: function() { 
+            alert("server error");
+          }
+      });
+  });
+</script>
+{% endblock %}
 
