@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 #def index(request):
     #return response.HttpResponse("hiiii")
 
+#-----------------------Register Customer-----------------------------------------------------
 
 def registercustomer(request):
     if request.method == 'POST':
@@ -22,7 +23,7 @@ def registercustomer(request):
             password = registerform.cleaned_data['password']	
             if  User.objects.filter(username=username).exists():
                 registerform = RegistrationForm(request.POST)
-                context = {'registerform':registerform,'error':'Username already exists add a new one'}
+                context = {'registerform':registerform,'error':'Username already exists add a new one.'}
                 return render(request,'customer/registercustomer.html',context)
             else:	
                 user = User.objects.create_user(username = username, 
@@ -40,6 +41,8 @@ def registercustomer(request):
         registerform = RegistrationForm()
     return render(request,'customer/registercustomer.html',{'registerform':registerform})
 
+
+#---------------------------------------Login customer-----------------------------------------------------
 from .forms import LoginForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -59,7 +62,7 @@ def logincustomer(request):
                 if user is not None:
                     if user.is_active:
                         login(request,user)	
-                        return HttpResponseRedirect(reverse('admindashboard') )
+                        return HttpResponseRedirect(reverse('registercustomer') )
                     else:
                         login_form = LoginForm(request.POST)
                         return render(request, "customer/logincustomer.html",{"form":login_form})
