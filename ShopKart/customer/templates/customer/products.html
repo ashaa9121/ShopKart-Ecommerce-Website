@@ -58,3 +58,46 @@
 </div>
     
 {% endblock maincontent %}
+{% block scripts %}
+<script type="text/javascript">
+    $(document).on('click','.addtocart',function(e){
+        e.preventDefault();
+        var prod_id = $(this).attr('product');
+        $.ajax(
+      {
+          type: "POST",
+          url: "{%url 'addtocart'%}",
+          dataType: 'json',
+          data: {product:prod_id},
+          success: function(data) {
+            $('#cartbtn'+prod_id).toggleClass('addtocart removefromcart');
+            $('#cartbtn'+prod_id).toggleClass('btn-outline-dark btn-outline-danger');
+            $('#cartbtn'+prod_id).html('<i class=" fas fa-times mr-2"></i>Remove from cart');
+          },
+          error: function() { 
+            alert("server error");
+          }
+      });
+    });
+
+    $(document).on('click','.removefromcart',function(e){
+        e.preventDefault();
+        var prod_id = $(this).attr('product');
+        $.ajax(
+      {
+          type: "POST",
+          url: "{%url 'removefromcart'%}",
+          dataType: 'json',
+          data: {product:prod_id},
+          success: function(data) {
+            $('#cartbtn'+prod_id).toggleClass('removefromcart addtocart');
+            $('#cartbtn'+prod_id).toggleClass('btn-outline-danger btn-outline-dark');
+            $('#cartbtn'+prod_id).html('<i class=" fas fa-cart-plus mr-2"></i>Add to cart');
+          },
+          error: function() { 
+            alert("server error");
+          }
+      });
+    });
+</script>
+{% endblock scripts %}

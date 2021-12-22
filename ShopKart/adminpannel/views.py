@@ -52,14 +52,14 @@ def checksuperuser(user):
     return user.is_superuser
 
 from django.urls import reverse_lazy
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 @user_passes_test(checksuperuser,login_url = reverse_lazy('login'))
 def admindashboard(request):
     return render(request,'adminpannel/admindashboard.html',{})    
 
 
-@user_passes_test(checksuperuser,login_url = reverse_lazy('login'))
+@login_required(login_url = reverse_lazy('login'))
 def logoutadmin(request):
     logout(request)
     #return HttpResponseRedirectBase(reverse('login')) 

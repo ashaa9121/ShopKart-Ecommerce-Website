@@ -62,7 +62,7 @@ def logincustomer(request):
                 if user is not None:
                     if user.is_active:
                         login(request,user)	
-                        return HttpResponseRedirect(reverse('registercustomer') )
+                        return HttpResponseRedirect(reverse('products') )
                     else:
                         login_form = LoginForm(request.POST)
                         return render(request, "customer/logincustomer.html",{"form":login_form})
@@ -79,16 +79,40 @@ def logincustomer(request):
 @login_required(login_url = reverse_lazy('logincustomer'))
 def logoutcustomer(request):
     logout(request)
-    return HttpResponseRedirect(reverse('logincustomer'))   
+    return HttpResponseRedirect(reverse('products'))   
 
 
 #--------------------------Homepage : Products--------------------------
 from adminpannel.models import Products
 from django.shortcuts import render
+from .models import CustomerCart
 
 def homepage(request):
     products = Products.objects.filter(is_active=1)
-    #usercart = []
-    #if request.user.is_authenticated:
-        #usercart = CustomerCart.objects.filter(customer = request.user)
-    return render(request,'customer/products.html',{'products':products})
+    usercart = []
+    if request.user.is_authenticated:
+        usercart = CustomerCart.objects.filter(customer = request.user)
+    return render(request,'customer/products.html',{'products':products,'usercart':usercart})
+
+#----------------------Add to cart---------------------------------------------   
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+
+@csrf_exempt
+@login_required
+def addproducttocart(request):
+        product_id = int(request.POST['product'])
+        user = request.user.id
+        cart_instance = CustomerCart(product_id = product_id,
+                                    customer_id = user)
+        cart_instance.save()
+        return JsonResponse({'result':'success'})
+
+@csrf_exempt
+@login_required
+def removeproductfromcart(request):
+        product_id = int(request.POST['product'])
+        user = request.user.id
+        cart_instance = CustomerCart.objects.filter(customer_id = user,product_id=product_id)
+        cart_instance.delete()
+        return JsonResponse({'result':'success'})
