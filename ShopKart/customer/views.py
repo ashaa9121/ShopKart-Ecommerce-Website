@@ -79,4 +79,16 @@ def logincustomer(request):
 @login_required(login_url = reverse_lazy('logincustomer'))
 def logoutcustomer(request):
     logout(request)
-    return HttpResponseRedirect(reverse('admindashboard'))      
+    return HttpResponseRedirect(reverse('logincustomer'))   
+
+
+#--------------------------Homepage : Products--------------------------
+from adminpannel.models import Products
+from django.shortcuts import render
+
+def homepage(request):
+    products = Products.objects.filter(is_active=1)
+    #usercart = []
+    #if request.user.is_authenticated:
+        #usercart = CustomerCart.objects.filter(customer = request.user)
+    return render(request,'customer/products.html',{'products':products})
