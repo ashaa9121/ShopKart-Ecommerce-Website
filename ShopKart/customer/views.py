@@ -91,10 +91,11 @@ def homepage(request):
     products = Products.objects.filter(is_active=1)
     usercart = []
     if request.user.is_authenticated:
-        usercart = CustomerCart.objects.filter(customer = request.user)
+        usercart = CustomerCart.objects.filter(customer_id= request.user)
     return render(request,'customer/products.html',{'products':products,'usercart':usercart})
 
-#----------------------Add to cart---------------------------------------------   
+#----------------------Add to cart---------------------------------------
+
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
@@ -108,6 +109,8 @@ def addproducttocart(request):
         cart_instance.save()
         return JsonResponse({'result':'success'})
 
+#----- Remove product from CustomerCart table-------
+
 @csrf_exempt
 @login_required
 def removeproductfromcart(request):
@@ -116,3 +119,22 @@ def removeproductfromcart(request):
         cart_instance = CustomerCart.objects.filter(customer_id = user,product_id=product_id)
         cart_instance.delete()
         return JsonResponse({'result':'success'})
+
+        
+from .forms import CustomerCheckoutForm
+
+@login_required(login_url = reverse_lazy('logincustomer'))
+def viewcustomercart(request):
+    usercart = CustomerCart.objects.filter(customer = request.user).select_related('product')
+    totalprice = sum(item.product.price for item in usercart)
+    checkoutForm = CustomerCheckoutForm()
+    return render(request,'customer/customercart.html',{'usercart':usercart,
+                                                        'totalprice':totalprice,
+                                                        'checkoutform':checkoutForm})
+
+@login_required(login_url = reverse_lazy('logincustomer'))
+def removeproductcartpage(request,cart_item_id):
+    user = request.user
+    cart_instance = CustomerCart.objects.filter(customer = user,id=cart_item_id)
+    cart_instance.delete()
+    return HttpResponseRedirect(reverse('viewcustomercart'))        
