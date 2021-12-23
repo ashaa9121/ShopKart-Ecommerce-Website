@@ -114,16 +114,16 @@ from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt
 @user_passes_test(checksuperuser,login_url = reverse_lazy('login'))
 def changestatus(request):
-    if request.is_ajax():
-        product_id = int(request.POST['product'])
-        action = request.POST['action']
+    #if request.is_ajax():
+        product_id = request.POST.get('product')
+        action = request.POST.get('action')
         product_instance = Products.objects.get(id=product_id)
         if action == "disable":
             product_instance.is_active = 0
         else:
             product_instance.is_active = 1
-            product_instance.save()
-    return JsonResponse({'result':'success'})
+        product_instance.save()
+        return JsonResponse({'result':'success'})
 #-----------------------------------------------------------------
 
 #-------------Edit Product----------------------------------------

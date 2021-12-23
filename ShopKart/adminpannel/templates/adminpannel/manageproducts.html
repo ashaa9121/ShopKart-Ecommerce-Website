@@ -45,9 +45,9 @@
                     </td>
                     <td>
                       {% if product.is_active == 1 %}
-                      <a id="statusbtn{{product.id}}" href="{%url 'changestatus'%}" prod_id ="{{product.id}}" class="disablebtn btn btn-sm btn-danger">Disable</a>
+                      <a id="statusbtn{{product.id}}" href="{%url 'changestatus' %}" product="{{product.id}}" class="disablebtn btn btn-sm btn-danger">Disable</a>
                       {%else%}
-                      <a id="statusbtn{{product.id}}" href="{%url 'changestatus'%}" prod_id ="{{product.id}}" class="enablebtn btn btn-sm btn-success">Enable</a>
+                      <a id="statusbtn{{product.id}}" href="{%url 'changestatus' %}" product="{{product.id}}" class="enablebtn btn btn-sm btn-success">Enable</a>
                       {%endif%}
                     </td>
                     <td><a href="{% url 'editproduct' product_id=product.id%}" class="edit btn btn-sm btn-warning">Edit</a></td>
@@ -74,19 +74,19 @@
 <script type="text/javascript">
   $(document).on('click','.disablebtn',function(e){
     e.preventDefault();
-    var prod_id = $(this).attr('prod_id');
+    var product = $(this).attr('product');
     $.ajax(
       {
           type: "POST",
           url: "{%url 'changestatus'%}",
           dataType: 'json',
-          data: {action:'disable',product:prod_id},
+          data: {action:'disable',product:product},
           success: function(data) {
-            $('#statustext'+prod_id).text('Inactive');
-            $('#statustext'+prod_id).toggleClass('text-success text-danger');
-            $('#statusbtn'+prod_id).toggleClass('disablebtn enablebtn');
-            $('#statusbtn'+prod_id).toggleClass('btn-danger btn-success');
-            $('#statusbtn'+prod_id).text('Enable');
+            $('#statustext'+product).text('Inactive');
+            $('#statustext'+product).toggleClass('text-success text-danger');
+            $('#statusbtn'+product).toggleClass('disablebtn enablebtn');
+            $('#statusbtn'+product).toggleClass('btn-danger btn-success');
+            $('#statusbtn'+product).text('Enable');
           },
           error: function() { 
             alert("server error");
@@ -96,19 +96,19 @@
 
   $(document).on('click','.enablebtn',function(e){
     e.preventDefault();
-    var prod_id = $(this).attr('prod_id');
+    var product = $(this).attr('product');
     $.ajax(
       {
           type: "POST",
-          url: "{%url 'changestatus'%}",
+          url: "{%url 'changestatus' %}",
           dataType: 'json',
-          data: {action:'enable',product:prod_id},
+          data: {action:'enable',product:product},
           success: function(data) {
-            $('#statustext'+prod_id).text('Active');
-            $('#statustext'+prod_id).toggleClass('text-danger text-success');
-            $('#statusbtn'+prod_id).toggleClass('enablebtn disablebtn');
-            $('#statusbtn'+prod_id).toggleClass('btn-success btn-danger');
-            $('#statusbtn'+prod_id).text('Disable');
+            $('#statustext'+product).text('Active');
+            $('#statustext'+product).toggleClass('text-danger text-success');
+            $('#statusbtn'+product).toggleClass('enablebtn disablebtn');
+            $('#statusbtn'+product).toggleClass('btn-success btn-danger');
+            $('#statusbtn'+product).text('Disable');
           },
           error: function() { 
             alert("server error");
