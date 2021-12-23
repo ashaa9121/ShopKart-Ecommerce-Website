@@ -120,6 +120,7 @@ def removeproductfromcart(request):
         cart_instance.delete()
         return JsonResponse({'result':'success'})
 
+#-------------- View products in Cart-------------------------
         
 from .forms import CustomerCheckoutForm
 
@@ -131,6 +132,8 @@ def viewcustomercart(request):
     return render(request,'customer/customercart.html',{'usercart':usercart,
                                                         'totalprice':totalprice,
                                                         'checkoutform':checkoutForm})
+
+#-------------Delete product from Cart-------------------------------------
 
 @login_required(login_url = reverse_lazy('logincustomer'))
 def removeproductcartpage(request,cart_item_id):
