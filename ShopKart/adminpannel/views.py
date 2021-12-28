@@ -160,8 +160,6 @@ def editproduct(request,product_id):
                                             })
         return render(request,'adminpannel/editproduct.html',{'productform':product_form,'current_image':product_instance.product_picture})
         
-#-------------------------------------------------------------
-
 #-----------------Delete Product------------------------------
 
 @user_passes_test(checksuperuser,login_url = reverse_lazy('login'))
@@ -170,3 +168,40 @@ def deleteproduct(request,product_id):
     product_instance.delete()
     return HttpResponseRedirect(reverse('manageproducts'))
 
+
+#----------------------Manage users------------------------
+
+from django.contrib.auth.models import User
+
+@user_passes_test(checksuperuser,login_url = reverse_lazy('login'))
+def manageusers(request):
+    users = User.objects.filter(is_superuser = 0,is_staff = 0)
+    return render(request,'adminpannel/manageusers.html',{'users':users})
+
+
+#---------------Change user status-----------------------------  
+
+
+@csrf_exempt
+@user_passes_test(checksuperuser,login_url = reverse_lazy('login'))
+def changestatususer(request):
+    if request.is_ajax:
+        action = request.POST['action']
+        user_id = int(request.POST['user_id'])
+        user_instance = User.objects.get(id=user_id)
+        if action == "disable":
+            user_instance.is_active = 0
+        else:
+            user_instance.is_active = 1
+        user_instance.save()
+        return JsonResponse({'result':'success'})
+
+
+#---------------Delete user-------------------
+
+@user_passes_test(checksuperuser,login_url = reverse_lazy('login'))
+def deleteuser(request,user_id):
+    user_instance = User.objects.get(id=user_id)
+    user_instance.delete()
+    return HttpResponseRedirect(reverse('manageusers'))  
+      

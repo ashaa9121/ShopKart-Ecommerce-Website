@@ -9,3 +9,5 @@ class CustomerCart(models.Model):
     customer = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False)
     product = models.ForeignKey(Products, on_delete=models.CASCADE, null=False, blank=False)
     addedon = models.DateTimeField(auto_now_add=True)
+
+
