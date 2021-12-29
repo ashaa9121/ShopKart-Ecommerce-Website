@@ -3,7 +3,7 @@ from django.http.request import HttpRequest
 from django.shortcuts import render
 
 from .forms import RegistrationForm
-from django.http.response import HttpResponseRedirect
+from django.http.response import HttpResponse, HttpResponseRedirect
 from django.urls.base import reverse, reverse_lazy
 from django.contrib.auth.models import User
 # Create your views here.
@@ -145,7 +145,7 @@ def removeproductcartpage(request,cart_item_id):
 
 
 
-#------------------------------
+#---------------Razorpay Payment :  Implementing payment gateway---------------
 import uuid
 import razorpay
 
@@ -155,14 +155,14 @@ def checkoutcustomer(request):
         user = request.user
         address = request.POST['address']
         phone = request.POST['phone']
-        usercart = CustomerCart.objects.filter(customer = request.user).select_related('product')
+        usercart = CustomerCart.objects.filter(customer = user).select_related('product')
         totalprice = sum(item.product.price for item in usercart)
         receipt = str(uuid.uuid1())
         client = razorpay.Client(auth=("rzp_test_6ls2J3vMwtRzDC", "D3bvo8lgzOeIQ0fzFaujhXpL"))
         DATA = {
             'amount':totalprice*100,
             'currency':'INR',
-            'receipt':'masupreiept',
+            'receipt':'shopkartreceipt',
             'payment_capture':1,
             'notes':{}
         }
@@ -188,7 +188,7 @@ def checkoutcustomer(request):
                     'amount' : totalprice,
                     'amountscript' : totalprice*100,
                     'currency' : 'INR',
-                    'companyname' : 'Mashupcommrz',
+                    'companyname' : 'ShopKart',
                     'username' : request.user.first_name+' '+request.user.last_name,
                     'useremail' : request.user.email,
                     'phonenum' : phone,
@@ -215,3 +215,6 @@ def markpaymentsuccess(request):
         customercart_instance = CustomerCart.objects.filter(customer = user)
         customercart_instance.delete()
         return JsonResponse({'result':'success'})
+
+
+#-------------------------------------------------------------------        
