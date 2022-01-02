@@ -38,8 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework.authtoken',
     'adminpannel',
     'customer',
+    'customerapi',
 ]
 
 MIDDLEWARE = [
@@ -72,7 +75,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ShopKart.wsgi.application'
 
-
+# django restframework configuration.......
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+        'rest_framework.permissions.IsAuthenticated', )
+}
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
