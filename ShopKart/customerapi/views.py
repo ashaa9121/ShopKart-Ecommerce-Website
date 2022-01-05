@@ -46,7 +46,7 @@ def registercustomer(request):
 
 #--------------Login api-----------------------
 
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate,logout
 from rest_framework.authtoken.models import Token
 
 @csrf_exempt
@@ -67,8 +67,39 @@ def logincustomer(request):
 
 
 #-------------Logout api----------------------
+
+from rest_framework.permissions import IsAuthenticated
+
 @csrf_exempt
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def logoutcustomer(request):
+
     request.user.auth_token.delete()
-    return Response({'message':'success'},status=HTTP_200_OK)
+    logout(request)
+    return Response('User Logged out successfully')
+
+#-------------Listing products----------------------
+
+from .serializers import ProductsListSerializer
+from adminpannel.models import Products
+@csrf_exempt
+@api_view(["POST"])
+def listproducts(request):
+    products = Products.objects.filter(is_active=1)
+    if request.user:
+        context = {'userid':request.user.id}
+    serializer = ProductsListSerializer(products,many=True,context=context)
+    return Response(serializer.data,status=HTTP_200_OK)
+
+#------------product details---------------
+
+@csrf_exempt
+@api_view(["POST"])
+def productdetails(request):
+    product_id = int(request.data.get("product"))
+    product = Products.objects.get(id = product_id)
+    if request.user:
+        context = {'userid':request.user.id}
+    serializer = ProductsListSerializer(product,context=context)
+    return Response(serializer.data,status=HTTP_200_OK)

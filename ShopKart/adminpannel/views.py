@@ -22,7 +22,7 @@ from django.http import HttpResponse
 #------------------------------Admin-login code-------------------------------
 def loginadmin(request):
     if request.user.is_authenticated:
-        return HttpResponse('You Are already logged in')
+        return HttpResponse('You are already logged in')
     else:	
         if request.method == 'POST':
             login_form = LoginForm(request.POST)
