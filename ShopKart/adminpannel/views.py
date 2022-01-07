@@ -107,16 +107,14 @@ def addproduct(request):
 
 
 #-------------------Enable/Disable product(Admin)--------------------
-
-from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 
 @csrf_exempt
 @user_passes_test(checksuperuser,login_url = reverse_lazy('login'))
 def changestatus(request):
-    #if request.is_ajax():
-        product_id = request.POST.get('product')
-        action = request.POST.get('action')
+        product_id = int(request.POST['product'])
+        action = request.POST['action']
         product_instance = Products.objects.get(id=product_id)
         if action == "disable":
             product_instance.is_active = 0
@@ -185,9 +183,8 @@ def manageusers(request):
 @csrf_exempt
 @user_passes_test(checksuperuser,login_url = reverse_lazy('login'))
 def changestatususer(request):
-    if request.is_ajax:
         action = request.POST['action']
-        user_id = int(request.POST['user_id'])
+        user_id = int(request.POST['userid'])
         user_instance = User.objects.get(id=user_id)
         if action == "disable":
             user_instance.is_active = 0

@@ -70,7 +70,7 @@
                 payment_signature:response.razorpay_signature},
           success: function(data) {
             alert('Payment success')
-            window.location.replace("{% url 'products' %}");
+           // window.location.replace("{% url 'products' %}");
           },
           error: function() { 
             alert("server error");

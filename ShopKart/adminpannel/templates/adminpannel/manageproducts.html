@@ -45,9 +45,9 @@
                     </td>
                     <td>
                       {% if product.is_active == 1 %}
-                      <a id="statusbtn{{product.id}}" href="{%url 'changestatus' %}" product="{{product.id}}" class="disablebtn btn btn-sm btn-danger">Disable</a>
+                      <a id="statusbtn{{product.id}}" href="{% url 'changestatus' %}" product="{{product.id}}" class="disablebtn btn btn-sm btn-danger">Disable</a>
                       {%else%}
-                      <a id="statusbtn{{product.id}}" href="{%url 'changestatus' %}" product="{{product.id}}" class="enablebtn btn btn-sm btn-success">Enable</a>
+                      <a id="statusbtn{{product.id}}" href="{% url 'changestatus' %}" product="{{product.id}}" class="enablebtn btn btn-sm btn-success">Enable</a>
                       {%endif%}
                     </td>
                     <td><a href="{% url 'editproduct' product_id=product.id%}" class="edit btn btn-sm btn-warning">Edit</a></td>
@@ -68,9 +68,7 @@
 </section>
 
 {%endblock%}
-
 {% block scripts %}
-
 <script type="text/javascript">
   $(document).on('click','.disablebtn',function(e){
     e.preventDefault();
@@ -100,7 +98,7 @@
     $.ajax(
       {
           type: "POST",
-          url: "{%url 'changestatus' %}",
+          url: "{%url 'changestatus'%}",
           dataType: 'json',
           data: {action:'enable',product:product},
           success: function(data) {
@@ -117,4 +115,3 @@
   });
 </script>
 {% endblock scripts %}
-
