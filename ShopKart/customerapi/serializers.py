@@ -2,7 +2,8 @@ from adminpannel.models import Products
 from rest_framework import serializers
 from customer.models import CustomerCart
 
-#----------Listing products-----------------------
+
+#----------for Listing products-----------------------
 
 class ProductsListSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,4 +21,19 @@ class ProductsListSerializer(serializers.ModelSerializer):
                 serialized_data['incart'] = 0
         else:
             serialized_data['incart'] = 0
-        return serialized_data        
+        return serialized_data
+
+
+#--------------for Listing customercart--------------
+
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Products
+        fields = ('__all__')
+
+
+class CustomerCartSerializer(serializers.ModelSerializer):
+    product = ProductSerializer(read_only=True)
+    class Meta:
+        model = CustomerCart
+        fields = ('__all__')
