@@ -148,27 +148,26 @@ def removeproductcartpage(request,cart_item_id):
 #---------------Razorpay Payment :  Implementing payment gateway---------------
 import uuid
 import razorpay
-
 @login_required
 def checkoutcustomer(request):
     if request.method == 'POST':
-        user = request.user.id
+        user = request.user
         address = request.POST['address']
         phone = request.POST['phone']
-        usercart = CustomerCart.objects.filter(customer_id = user).select_related('product')
+        usercart = CustomerCart.objects.filter(customer = request.user).select_related('product')
         totalprice = sum(item.product.price for item in usercart)
         receipt = str(uuid.uuid1())
-        client = razorpay.Client(auth=("rzp_test_6ls2J3vMwtRzDC", "D3bvo8lgzOeIQ0fzFaujhXpL"))
+        client = razorpay.Client(auth=("rzp_test_p5xsbKzG6zQkka", "6bmuNAIGx3VvgLvK0luFwUaG"))
         DATA = {
             'amount':totalprice*100,
             'currency':'INR',
-            'receipt':'shopkartreceipt',
+            'receipt':'masupreiept',
             'payment_capture':1,
             'notes':{}
         }
         order_details = client.order.create(data=DATA)
         # return HttpResponse(order_details)
-        customercheckout_order_instance = CustomerCheckout(customer_id = request.user.id,
+        customercheckout_order_instance = CustomerCheckout(customer = request.user,
                                             order_id = order_details.get('id'),
                                             total_amount = totalprice,
                                             reciept_num = receipt,
@@ -177,7 +176,7 @@ def checkoutcustomer(request):
         customercheckout_order_instance.save()
         customercheckout = CustomerCheckout.objects.get(id = customercheckout_order_instance.id)
         for item in usercart:
-            orderedproduct_instance = customerPayedProducts(customer_id = request.user.id,
+            orderedproduct_instance = customerPayedProducts(customer = request.user,
                                                             product_name = item.product.product_name,
                                                             price = item.product.price,
                                                             product_description = item.product.product_description,
@@ -188,34 +187,29 @@ def checkoutcustomer(request):
                     'amount' : totalprice,
                     'amountscript' : totalprice*100,
                     'currency' : 'INR',
-                    'companyname' : 'ShopKart',
+                    'companyname' : 'Mashupcommrz',
                     'username' : request.user.first_name+' '+request.user.last_name,
                     'useremail' : request.user.email,
                     'phonenum' : phone,
-                    'rzpkey' : 'rzp_test_6ls2J3vMwtRzDC'
+                    'rzpkey' : 'rzp_test_p5xsbKzG6zQkka'
                     }
         return render(request,'customer/checkout.html',context)
     else:
       return HttpResponseRedirect(reverse('products'))  
 
-#------------markpaymentsuccess---------------------------------
 @csrf_exempt
 @login_required(login_url = reverse_lazy('logincustomer'))
 def markpaymentsuccess(request):
-        order_id = int(request.POST['order_id'])
-        payment_id = int(request.POST['payment_id'])
+        order_id = request.POST['order_id']
+        payment_id = request.POST['payment_id']
         payment_signature = request.POST['payment_signature']
-        user = request.user.id
+        user = request.user
         customercart_order_instance = CustomerCheckout.objects.get(order_id = order_id,
-                                                                customer_id=user)
+                                                                customer=user)
         customercart_order_instance.payment_signature = payment_signature
         customercart_order_instance.payment_id = payment_id
-        
         customercart_order_instance.payment_complete = 1
         customercart_order_instance.save()
-        customercart_instance = CustomerCart.objects.filter(customer_id = user)
+        customercart_instance = CustomerCart.objects.filter(customer = user)
         customercart_instance.delete()
         return JsonResponse({'result':'success'})
-
-
-#-------------------------------------------------------------------        
