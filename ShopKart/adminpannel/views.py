@@ -58,6 +58,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 def admindashboard(request):
     return render(request,'adminpannel/admindashboard.html',{})    
 
+#--------Logout----------------------------
 
 @login_required(login_url = reverse_lazy('login'))
 def logoutadmin(request):
